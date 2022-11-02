@@ -1,16 +1,17 @@
-import User from '../models/User';
+import mongoose from 'mongoose';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { config } from '../config/config';
+import User, { IUser } from '../models/user';
 
 const opts = {
-    clientID: config.google.clientID,
+    clientID: config.google.clientId,
     clientSecret: config.google.clientSecret,
     callbackURL: '/users/google/callback',
 };
 
 const googleStrategy = new GoogleStrategy(opts, async (accessToken, refreshToken, profile, done) => {
-    User.findOne({ email: profile.emails?.[0].value }, async (err: Error, user: Express.User) => {
+    User.findOne({ email: profile.emails?.[0].value }, async (err: mongoose.CallbackError, user: IUser) => {
         if (err) {
             return done(err, false);
         }
@@ -19,9 +20,9 @@ const googleStrategy = new GoogleStrategy(opts, async (accessToken, refreshToken
                 email: profile.emails?.[0].value,
             });
             await newUser.save();
-            done(null, newUser);
+            return done(null, newUser);
         }
-        done(null, user);
+        return done(null, user);
     });
 });
 

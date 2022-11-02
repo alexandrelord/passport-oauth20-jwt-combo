@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import jsonwebtoken, { JwtPayload } from 'jsonwebtoken';
+import jsonwebtoken from 'jsonwebtoken';
 import { config } from '../config/config';
-import User from '../models/User';
+import User from '../models/user';
 import { issueJWT } from '../utils/utils';
 
 export const loginRegister = async (req: Request, res: Response) => {
