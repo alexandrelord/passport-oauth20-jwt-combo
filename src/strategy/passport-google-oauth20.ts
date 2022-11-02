@@ -16,11 +16,10 @@ const googleStrategy = new GoogleStrategy(opts, async (accessToken, refreshToken
             return done(err, false);
         }
         if (!user) {
-            const newUser = new User({
+            const newUser = await new User({
                 email: profile.emails?.[0].value,
-            });
-            await newUser.save();
-            return done(null, newUser);
+            }).save();
+            return done(null, newUser.toObject());
         }
         return done(null, user);
     });
