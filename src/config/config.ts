@@ -3,15 +3,15 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const config = {
-    mongo: {
-        url: `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@cluster0.slhir.mongodb.net/passport-oauth20`,
+    db: {
+        url: `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@cluster0.slhir.mongodb.net/passport-jwt`,
     },
     jwt: {
-        accessTokenSecret: process.env.ACCESS_TOKEN_SECRET!,
-        refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET!,
+        accessTokenSecret: process.env.ACCESS_TOKEN_SECRET || 'access-token-secret',
+        refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET || 'refresh-token-secret',
     },
     google: {
-        clientID: process.env.GOOGLE_CLIENT_ID!,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+        clientId: process.env.GOOGLE_CLIENT_ID || '',
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
     },
 };
