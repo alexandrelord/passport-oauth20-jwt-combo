@@ -1,39 +1,35 @@
 import { Request, Response } from 'express';
-import jsonwebtoken from 'jsonwebtoken';
-import { config } from '../config/config';
-import User from '../models/user';
-import { issueJWT } from '../utils/utils';
+import { issueJWT, decodeJWT, StatusError } from '../services/services';
+import { IUser } from '../models/user';
 
-export const loginRegister = async (req: Request, res: Response) => {
+export const loginOrRegister = async (req: Request, res: Response) => {
+    const { _id } = req.user as IUser;
+
     try {
-        console.log(req.user);
-        const user = req.user;
-        const { accessToken, refreshToken } = issueJWT(user);
+        const { refreshToken, accessToken } = issueJWT(_id);
+
         res.cookie('jwt', refreshToken, { httpOnly: true, secure: true });
+
         return res.status(200).json({ accessToken });
     } catch (error) {
-        res.status(500).json({ msg: 'Internal server error' });
+        if (error instanceof StatusError) {
+            return res.status(error.status).json({ message: error.message });
+        }
+        return res.status(500).json({ error });
     }
 };
 
 export const refresh = async (req: Request, res: Response) => {
-    if (req.cookies.jwt) {
-        const { refreshToken } = req.cookies;
+    const { jwt } = req.cookies;
 
-        jsonwebtoken.verify(refreshToken, config.jwt.refreshTokenSecret, (err: any, payload: any) => {
-            if (err) {
-                return res.sendStatus(403);
-            }
+    try {
+        const accessToken = await decodeJWT(jwt);
 
-            const user = User.findById(payload.sub);
-
-            if (!user) {
-                return res.sendStatus(403);
-            }
-
-            const { accessToken } = issueJWT(user);
-
-            return res.json({ accessToken });
-        });
+        return res.status(200).json({ accessToken });
+    } catch (error) {
+        if (error instanceof StatusError) {
+            return res.status(error.status).json({ message: error.message });
+        }
+        return res.status(500).json({ error });
     }
 };
