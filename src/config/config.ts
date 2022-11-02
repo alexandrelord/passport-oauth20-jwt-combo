@@ -4,7 +4,7 @@ dotenv.config();
 
 export const config = {
     db: {
-        url: `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@cluster0.slhir.mongodb.net/passport-jwt`,
+        url: `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@cluster0.slhir.mongodb.net/passport-oauth20`,
     },
     jwt: {
         accessTokenSecret: process.env.ACCESS_TOKEN_SECRET || 'access-token-secret',
